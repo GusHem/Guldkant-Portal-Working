@@ -1,4 +1,3 @@
-// CACHE BUSTER v3.1 - Emergency Deploy
 // 🔬 ATOMSMED QUANTUM apiService.js v3.0 - PRODUCTION READY
 // NordSym Atom-Smed: Kirurgiskt precis för DISPATCH FIX + fullständig harmoni
 
@@ -253,46 +252,38 @@ const apiService = {
     // 📧 SKICKA OFFERT VIA EMAIL - ATOMSMED ROBUST VERSION
     sendProposal: async (quote) => {
         try {
-            console.log('📧 Sending proposal via n8n email workflow...');
-            console.log('📤 Received quote object:', quote);
+            console.log('📧 Sending proposal...');
+            console.log('📊 Received quote data:', quote);
             
-            if (!quote || typeof quote !== 'object') {
-                throw new Error('Quote data krävs för att skicka förslag');
-            }
-
-            // 🎯 ROBUST IDENTIFIER EXTRACTION
-            const offerId = quote.rawId || quote.id || quote.offertId;
+            // ⚛️ ATOMÄR FIX - FLEXIBEL DATA EXTRACTION
+            const quoteId = quote.rawId || quote.id || quote.offertId;
+            const email = quote.email || quote.contactEmail || quote['Contact Email'];
             
-            // 🎯 ROBUST EMAIL EXTRACTION - MULTIPLE FALLBACKS
-            const customerEmail = quote.email || 
-                                  quote.contactEmail || 
-                                  quote.customerEmail ||
-                                  quote.kundemail ||
-                                  'gustav@nordsym.com'; // Fallback för test
+            console.log('🔍 Extracted quoteId:', quoteId);
+            console.log('🔍 Extracted email:', email);
             
-            if (!offerId) {
-                throw new Error(`Offert-ID saknas - kan inte skicka email. Quote: ${JSON.stringify(quote, null, 2)}`);
+            if (!quoteId) {
+                throw new Error('Offert-ID krävs för att skicka förslag');
             }
             
-            console.log('📧 Email target:', customerEmail);
-            console.log('🆔 Offer ID:', offerId);
-
-            // 🚀 PERFECT PAYLOAD - ALIGNED WITH N8N ROUTER LOGIC
-            // FIX: Ändrat payload för att matcha n8n-routerns krav
-            const payload = {
+            if (!email) {
+                throw new Error('Email krävs för att skicka förslag');
+            }
+            
+            const payload = { 
                 action: 'dispatch',
-                offerId: offerId,
+                offerId: quoteId,
+                email: email
             };
             
-            console.log('📤 Email payload prepared:', payload);
+            console.log('📤 Sending payload:', payload);
             
-            // 🎯 CALL UNIFIED EMAIL WORKFLOW
             const response = await makeRequest(`${API_BASE_URL}/quote/dispatch`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
             
-            console.log('✅ Proposal email sent successfully via n8n');
+            console.log('✅ Proposal sent successfully');
             return response;
             
         } catch (error) {
