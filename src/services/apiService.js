@@ -257,7 +257,7 @@ const apiService = {
             
             // ⚛️ ATOMÄR FIX - FLEXIBEL DATA EXTRACTION
             const quoteId = quote.rawId || quote.id || quote.offertId;
-            const email = quote.email || quote.contactEmail || quote['Contact Email'];
+            const email = quote.contactEmail || quote.email || quote['Contact Email'] || quote.customerEmail || quote.kundemail;
             
             console.log('🔍 Extracted quoteId:', quoteId);
             console.log('🔍 Extracted email:', email);
