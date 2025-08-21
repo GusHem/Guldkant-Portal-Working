@@ -24,7 +24,7 @@ export const statusTextMap = {
     'godkänd': 'Godkänd',
     'genomförd': 'Genomförd',
     'betald': 'Betald',
-    'förlorad': 'Förlorad Affär',
+    'förlorad-affär': 'Förlorad Affär',  // 🔧 FIXAT: Ändrat från 'förlorad' till 'förlorad-affär'
     'arkiverad': 'Arkiverad'
 };
 
@@ -34,6 +34,6 @@ export const statusColors = {
     godkänd: 'bg-green-500',
     genomförd: 'bg-blue-700',
     betald: 'bg-purple-500',
-    förlorad: 'bg-red-500',
+    'förlorad-affär': 'bg-red-500',  // 🔧 FIXAT: Ändrat från 'förlorad' till 'förlorad-affär'
     arkiverad: 'bg-gray-500'
 };
