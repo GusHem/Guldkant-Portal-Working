@@ -278,11 +278,10 @@ const apiService = {
             console.log('🆔 Offer ID:', offerId);
 
             // 🚀 PERFECT PAYLOAD - ALIGNED WITH N8N ROUTER LOGIC
-            const payload = { 
-                offerId: offerId,
+            // FIX: Ändrat payload för att matcha n8n-routerns krav
+            const payload = {
                 action: 'dispatch',
-                customerEmail: customerEmail,
-                timestamp: new Date().toISOString()
+                offerId: offerId,
             };
             
             console.log('📤 Email payload prepared:', payload);
