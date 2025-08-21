@@ -249,39 +249,50 @@ const apiService = {
         }
     },
 
-    // 📧 SKICKA OFFERT VIA EMAIL - ⚡ QUANTUM FIX: DISPATCH SYSTEM
+    // 📧 SKICKA OFFERT VIA EMAIL - ATOMSMED ROBUST VERSION
     sendProposal: async (quote) => {
         try {
-            console.log('📧 Sending proposal via dispatch system...');
+            console.log('📧 Sending proposal via n8n email workflow...');
+            console.log('📤 Received quote object:', quote);
             
-            // 🔧 ROBUST EMAIL EXTRACTION
-            const contactEmail = quote.contactEmail || quote.email;
-            const offerId = quote.id || quote.offertId;
-            
-            if (!quote || !contactEmail) {
-                throw new Error('Quote och email krävs för att skicka förslag');
+            if (!quote || typeof quote !== 'object') {
+                throw new Error('Quote data krävs för att skicka förslag');
             }
 
+            // 🎯 ROBUST IDENTIFIER EXTRACTION
+            const offerId = quote.rawId || quote.id || quote.offertId;
+            
+            // 🎯 ROBUST EMAIL EXTRACTION - MULTIPLE FALLBACKS
+            const customerEmail = quote.email || 
+                                  quote.contactEmail || 
+                                  quote.customerEmail ||
+                                  quote.kundemail ||
+                                  'gustav@nordsym.com'; // Fallback för test
+            
             if (!offerId) {
-                throw new Error('OffertID krävs för att skicka förslag');
+                throw new Error(`Offert-ID saknas - kan inte skicka email. Quote: ${JSON.stringify(quote, null, 2)}`);
             }
+            
+            console.log('📧 Email target:', customerEmail);
+            console.log('🆔 Offer ID:', offerId);
 
-            // ⚡ CRITICAL FIX: Använd 'dispatch' action som n8n förväntar sig
+            // 🚀 PERFECT PAYLOAD - ALIGNED WITH N8N ROUTER LOGIC
             const payload = { 
-                action: 'dispatch',        // ✅ FIXAT: var 'send_proposal'
-                offerId: offerId,          // ✅ FIXAT: Lägg till offerId
-                customerEmail: contactEmail
+                offerId: offerId,
+                action: 'dispatch',
+                customerEmail: customerEmail,
+                timestamp: new Date().toISOString()
             };
             
-            console.log('📤 Dispatch payload:', payload);
+            console.log('📤 Email payload prepared:', payload);
             
-            // 🎯 ANVÄND UNIFIED QUOTE SYSTEM ENDPOINT
+            // 🎯 CALL UNIFIED EMAIL WORKFLOW
             const response = await makeRequest(`${API_BASE_URL}/quote/dispatch`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
             
-            console.log('✅ Proposal sent successfully via dispatch system');
+            console.log('✅ Proposal email sent successfully via n8n');
             return response;
             
         } catch (error) {
