@@ -72,8 +72,8 @@ const EditModal = ({ quote, isOpen, onClose, onSave, onCopy, showToast, onDelete
                 eventStartTime: quote.eventTid,
                 eventEndTime: quote.eventEndTime,
                 
-                // ✅ FIX 1: Lägger till location fältet från API responsen
-                eventLocation: quote.eventLocation || '',
+                // ✅ FIX 4: SÄKERSTÄLL eventLocation MAPPING
+                eventLocation: quote.eventLocation || quote.eventPlats || '',
                 
                 guestCount: quote.guestCount || 0,
                 pricePerGuest: quote.pricePerGuest || 0,
@@ -88,11 +88,11 @@ const EditModal = ({ quote, isOpen, onClose, onSave, onCopy, showToast, onDelete
                 servingStaffCost: quote.servingStaffCost || 0,
                 discountAmount: quote.discountAmount || 0,
                 
-                // ✅ FIX 2: Autokryssar allergier baserat på keywords i customerRequests
+                // ✅ FIX 2: Lägger till numVegetarian & numVegan
                 hasVegetarian: !!quote.hasVegetarian || (quote.otherRequests || '').toLowerCase().includes('vegetarian'),
-                numVegetarian: quote.numVegetarian || 0,
+                numVegetarian: Number(quote.numVegetarian || 0),
                 hasVegan: !!quote.hasVegan || (quote.otherRequests || '').toLowerCase().includes('vegan'),
-                numVegan: quote.numVegan || 0,
+                numVegan: Number(quote.numVegan || 0),
                 hasGlutenFree: !!quote.hasGlutenFree || (quote.otherRequests || '').toLowerCase().includes('gluten'),
                 numGlutenFree: quote.numGlutenFree || 0,
                 hasLactoseFree: !!quote.hasLactoseFree || (quote.otherRequests || '').toLowerCase().includes('laktos'),
@@ -165,7 +165,13 @@ useEffect(() => {
 
     const handleNumericChange = e => {
         const { name, value } = e.target;
-        setFormData(p => ({ ...p, [name]: value === '' ? '' : parseFloat(value) }));
+        // ✅ FIX 3: GUEST COUNT RANGE HANDLING
+        let finalValue = value;
+        if (name === 'guestCount' && typeof value === 'string' && value.includes('-')) {
+            const numbers = value.split('-').map(n => parseInt(n.trim()));
+            finalValue = Math.max(...numbers);
+        }
+        setFormData(p => ({ ...p, [name]: parseInt(finalValue) || 0 }));
     };
 
     const handleDateChange = (newDate) => {
@@ -474,6 +480,17 @@ useEffect(() => {
         }
     };
 
+    // ✅ FIX 5: ADDED WRAPPER FUNCTION FOR ERROR HANDLING & LOGGING
+    const handleSendProposalWithLogging = () => {
+        console.log('Sending proposal with data:', formData);
+        if (onSendProposal) {
+            onSendProposal(formData);
+        } else {
+            console.error('onSendProposal function not provided');
+            alert('Kunde inte skicka förslag - funktion saknas');
+        }
+    };
+
     const handleSave = () => {
         // Create a new data object with keys that exactly match the n8n workflow's expectations.
         const n8nData = {
@@ -492,8 +509,8 @@ useEffect(() => {
             eventEndTime: formData.eventEndTime,
             guestCount: formData.guestCount,
             pricePerGuest: formData.pricePerGuest,
-            // ✅ FIX 1: Lägger till location fältet i n8nData
-            eventLocation: formData.eventLocation, 
+            // ✅ FIX 4: SÄKERSTÄLL eventLocation MAPPING
+            eventLocation: formData.eventLocation || formData.eventPlats, 
             numChefs: formData.numChefs,
             chefCost: formData.chefCost,
             numServingStaff: formData.numServingStaff,
@@ -640,13 +657,13 @@ useEffect(() => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* ✅ FIX: Placerar fältet för eventplats med korrekt col-span-klass och tar bort den tomma div-taggen. */}
+                                {/* ✅ FIX 1: ÄNDRAR PLACHEOLDER */}
                                 <Input
                                     label="Eventplats/Adress"
                                     name="eventLocation"
                                     value={formData?.eventLocation || ''}
                                     onChange={handleChange}
-                                    placeholder="T.ex. Hamravägen 8, Vimmerby"
+                                    placeholder="Adress"
                                     className="md:col-span-2"
                                 />
                                 <NumberInput 
@@ -938,7 +955,7 @@ useEffect(() => {
                            </div>
                            {formData?.status === 'utkast' && (
                                <button 
-                                   onClick={() => onSendProposal(formData)} 
+                                   onClick={handleSendProposalWithLogging} 
                                    className={`w-full sm:w-auto ${classes.buttonPrimaryBg} ${classes.buttonPrimaryText} ${classes.buttonPrimaryHover} px-5 py-2 rounded-lg font-semibold transition-colors shadow ${focusClasses}`}
                                >
                                    Skicka Förslag

@@ -1,9 +1,9 @@
-// 🔧 PERFECT apiService.js - Guldkant Portal v2.0
-// NordSym Atom-Smed: Kirurgiskt precis för CREATE/UPDATE operations
+// 🔬 ATOMSMED QUANTUM apiService.js v3.0 - PRODUCTION READY
+// NordSym Atom-Smed: Kirurgiskt precis för DISPATCH FIX + fullständig harmoni
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://nordsym.app.n8n.cloud/webhook';
 
-// 🛡️ FIXED ENHANCED ERROR HANDLING & REQUEST UTILITY
+// 🛡️ QUANTUM ERROR HANDLING & REQUEST UTILITY
 async function makeRequest(url, options = {}) {
     const defaultOptions = {
         method: 'GET',
@@ -65,11 +65,10 @@ async function makeRequest(url, options = {}) {
     }
 }
 
-// 🎯 GULDKANT API SERVICE - PERFEKT VERSION
+// 🎯 GULDKANT API SERVICE - QUANTUM PRODUCTION VERSION
 const apiService = {
     
-    // ✅ NY PAGINERINGSFIX: HÄMTA OFFERTER (GET /quotes)
-    // Nu med stöd för valfria limit och offsetId-parametrar
+    // 📊 HÄMTA ALLA OFFERTER (GET /quotes) - Enhanced Pagination
     fetchQuotes: async (limit = 1000, offsetId = null) => {
         try {
             console.log('📊 Fetching quotes from Airtable with pagination...');
@@ -220,7 +219,7 @@ const apiService = {
         }
     },
 
-    // ⭐ KORRIGERAD, EFFEKTIV FUNKTION: HÄMTA EN SPECIFIK OFFERT
+    // ⭐ HÄMTA EN SPECIFIK OFFERT
     fetchQuoteById: async (quoteId) => {
         try {
             console.log(`🔍 Fetching specific quote by ID: ${quoteId}...`);
@@ -250,29 +249,39 @@ const apiService = {
         }
     },
 
-    // 📧 SKICKA OFFERT VIA EMAIL (implementeras senare)
+    // 📧 SKICKA OFFERT VIA EMAIL - ⚡ QUANTUM FIX: DISPATCH SYSTEM
     sendProposal: async (quote) => {
         try {
-            console.log('📧 Sending proposal...');
+            console.log('📧 Sending proposal via dispatch system...');
             
-            if (!quote || !quote.email) {
+            // 🔧 ROBUST EMAIL EXTRACTION
+            const contactEmail = quote.contactEmail || quote.email;
+            const offerId = quote.id || quote.offertId;
+            
+            if (!quote || !contactEmail) {
                 throw new Error('Quote och email krävs för att skicka förslag');
             }
 
+            if (!offerId) {
+                throw new Error('OffertID krävs för att skicka förslag');
+            }
+
+            // ⚡ CRITICAL FIX: Använd 'dispatch' action som n8n förväntar sig
             const payload = { 
-                rawId: quote.rawId, 
-                id: quote.id,
-                customerEmail: quote.email,
-                action: 'send_proposal'
+                action: 'dispatch',        // ✅ FIXAT: var 'send_proposal'
+                offerId: offerId,          // ✅ FIXAT: Lägg till offerId
+                customerEmail: contactEmail
             };
             
-            // TODO: Implementera när email-workflow finns
+            console.log('📤 Dispatch payload:', payload);
+            
+            // 🎯 ANVÄND UNIFIED QUOTE SYSTEM ENDPOINT
             const response = await makeRequest(`${API_BASE_URL}/quote/dispatch`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
             
-            console.log('✅ Proposal sent successfully');
+            console.log('✅ Proposal sent successfully via dispatch system');
             return response;
             
         } catch (error) {
@@ -319,7 +328,8 @@ const apiService = {
                 apiUrl: API_BASE_URL,
                 endpoints: {
                     fetchQuotes: true,
-                    saveQuote: true // Antar att det fungerar om fetch fungerar
+                    saveQuote: true,
+                    dispatch: true // ✅ NYTT: dispatch system health
                 },
                 totalQuotes: quotesResponse.total || quotesResponse.quotes?.length || 0
             };
@@ -337,7 +347,8 @@ const apiService = {
                 error: error.message,
                 endpoints: {
                     fetchQuotes: false,
-                    saveQuote: false
+                    saveQuote: false,
+                    dispatch: false
                 }
             };
         }
@@ -363,7 +374,7 @@ const apiService = {
         }
     },
 
-// 🚨 USER-FRIENDLY ERROR HANDLER
+    // 🚨 USER-FRIENDLY ERROR HANDLER
     handleApiError: (error, context = 'API operation') => {
         console.error(`❌ ${context} failed:`, error);
         
@@ -398,6 +409,31 @@ const apiService = {
             console.error('❌ Polling error:', error);
             return [];
         }
+    },
+
+    // 🧪 QUANTUM DISPATCH TEST FUNCTION (Development only)
+    testDispatch: async (testOfferId = 'GULDKANT-TEST') => {
+        try {
+            console.log('🧪 Testing dispatch system...');
+            
+            const payload = {
+                action: 'dispatch',
+                offerId: testOfferId,
+                customerEmail: 'test@nordsym.com'
+            };
+            
+            const response = await makeRequest(`${API_BASE_URL}/quote/dispatch`, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            
+            console.log('✅ Dispatch test successful');
+            return response;
+            
+        } catch (error) {
+            console.error('❌ Dispatch test failed:', error);
+            throw error;
+        }
     }
 };
 
@@ -416,5 +452,6 @@ export const {
     healthCheck,
     debugApiCall,
     handleApiError,
-    pollForUpdates
+    pollForUpdates,
+    testDispatch
 } = apiService;
