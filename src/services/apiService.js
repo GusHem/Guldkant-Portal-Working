@@ -1,5 +1,5 @@
-// 🔬 ATOMSMED QUANTUM apiService.js v3.0 - PRODUCTION READY
-// NordSym Atom-Smed: Kirurgiskt precis för DISPATCH FIX + fullständig harmoni
+// ⚛️ ATOMSMED TOTAL REBUILD: apiService.js v4.0 - PRODUCTION READY
+// Denna version inkluderar en robust och kraschsäker sendProposal funktion.
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://nordsym.app.n8n.cloud/webhook';
 
@@ -253,11 +253,11 @@ const apiService = {
     sendProposal: async (quote) => {
         try {
             console.log('📧 Sending proposal...');
-            console.log('📊 Received quote data:', quote);
+            console.log('📊 Received quote data keys:', Object.keys(quote));
             
             // ⚛️ ATOMÄR FIX - FLEXIBEL DATA EXTRACTION
             const quoteId = quote.rawId || quote.id || quote.offertId;
-            const email = quote.contactEmail || quote.email || quote['Contact Email'] || quote.customerEmail || quote.kundemail;
+            const email = quote.email || quote.contactEmail || quote['Contact Email'];
             
             console.log('🔍 Extracted quoteId:', quoteId);
             console.log('🔍 Extracted email:', email);
