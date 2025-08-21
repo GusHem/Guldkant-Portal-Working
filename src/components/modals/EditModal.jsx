@@ -609,6 +609,15 @@ useEffect(() => {
                                     value={formData?.contactPhone || ''} 
                                     onChange={handleChange} 
                                 />
+                                {/* ✅ FIX: Flyttar location field till en logisk plats i grid-layouten */}
+                                <Input
+                                    label="Eventplats/Adress"
+                                    name="eventLocation"
+                                    value={formData?.eventLocation || ''}
+                                    onChange={handleChange}
+                                    placeholder="Adress"
+                                    className="md:col-span-2"
+                                />
                                 <div className="relative">
                                     <label className={`block text-xs font-medium ${classes.textSecondary} mb-1`}>
                                         Eventdatum
@@ -657,15 +666,6 @@ useEffect(() => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* ✅ FIX 1: ÄNDRAR PLACHEOLDER */}
-                                <Input
-                                    label="Eventplats/Adress"
-                                    name="eventLocation"
-                                    value={formData?.eventLocation || ''}
-                                    onChange={handleChange}
-                                    placeholder="Adress"
-                                    className="md:col-span-2"
-                                />
                                 <NumberInput 
                                     label="Antal gäster" 
                                     name="guestCount" 
