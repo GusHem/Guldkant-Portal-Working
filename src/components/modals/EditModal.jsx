@@ -59,13 +59,15 @@ const EditModal = ({ quote, isOpen, onClose, onSave, onCopy, showToast, onDelete
 
             const normalizedData = {
                 id: quote.id || null,
+                rawId: quote.rawId || quote.id || null,
                 status: quote.status || 'utkast',
                 
                 // Mappar API-svar till interna state-namn
                 customerName: quote.kundNamn || '',
                 customerType: quote.customerType || 'privat',
                 contactPerson: quote.kontaktPerson || '',
-                contactEmail: quote.email || '',
+                // ✅ FIX: Lägger till multi-source email mapping
+                contactEmail: quote.email || quote.contactEmail || quote['Contact Email'] || '',
                 contactPhone: quote.telefon || '',
                 customerIdNumber: quote.customerIdNumber || '',
                 eventDate: quote.eventDatum,
@@ -322,11 +324,11 @@ useEffect(() => {
             if (data.customerRequests && data.customerRequests.trim()) {
                 drawSection('Kundens Önskemål');
                 doc.setFont('helvetica', 'normal');
-                doc.setFontSize(10);
-                doc.setTextColor(textColor);
-                const requestLines = doc.splitTextToSize(data.customerRequests, pageWidth - (pageMargin * 2));
-                doc.text(requestLines, pageMargin, currentY);
-                currentY += requestLines.length * 5 + 10;
+            doc.setFontSize(10);
+            doc.setTextColor(textColor);
+            const requestLines = doc.splitTextToSize(data.customerRequests, pageWidth - (pageMargin * 2));
+            doc.text(requestLines, pageMargin, currentY);
+            currentY += requestLines.length * 5 + 10;
             }
 
             // PRICING SECTION
@@ -480,14 +482,57 @@ useEffect(() => {
         }
     };
 
-    // ✅ FIX 5: ADDED WRAPPER FUNCTION FOR ERROR HANDLING & LOGGING
+    // ⚛️ QUANTUM FIX: ROBUST SEND PROPOSAL WITH VALIDATION
     const handleSendProposalWithLogging = () => {
-        console.log('Sending proposal with data:', formData);
+        console.log('🔍 ATOMSMED QUANTUM DEBUG: Pre-send validation...');
+        
+        // ⚛️ MULTI-LAYER EMAIL EXTRACTION
+        const extractEmail = (data) => {
+            const emailSources = [
+                data?.contactEmail,
+                data?.email, 
+                data?.['Contact Email'],
+                data?.customerEmail,
+                quote?.email,
+                quote?.contactEmail,
+                quote?.['Contact Email']
+            ];
+            
+            for (const email of emailSources) {
+                if (email && typeof email === 'string' && email.includes('@')) {
+                    return email.trim();
+                }
+            }
+            return null;
+        };
+
+        const quoteId = formData?.rawId || formData?.id || quote?.rawId || quote?.id;
+        const email = extractEmail(formData) || extractEmail(quote);
+        
+        // ⚛️ QUANTUM VALIDATION
+        if (!quoteId) {
+            showToast('KRITISKT FEL: Offert-ID saknas. Kontakta support.', 'error');
+            return;
+        }
+        
+        if (!email) {
+            showToast('Email-adress krävs för att skicka förslag. Kontrollera kundinformation.', 'error');
+            return;
+        }
+        
+        // ⚛️ ROBUST PAYLOAD CONSTRUCTION
+        const sendPayload = {
+            ...formData,
+            id: quoteId,
+            rawId: quoteId,
+            email: email,
+            contactEmail: email
+        };
+        
         if (onSendProposal) {
-            onSendProposal(formData);
+            onSendProposal(sendPayload);
         } else {
-            console.error('onSendProposal function not provided');
-            alert('Kunde inte skicka förslag - funktion saknas');
+            showToast('TEKNISKT FEL: Skicka-funktion saknas. Kontakta support.', 'error');
         }
     };
 
