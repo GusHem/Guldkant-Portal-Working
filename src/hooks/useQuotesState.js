@@ -181,15 +181,16 @@ const useQuotesState = (showToast) => {
         setIsSyncing(true);
         try {
             await apiService.sendProposal(quote);
-            await loadQuotes(); // Ladda om här är OK, status ändras i backend.
+            setQuotes(prev => prev.map(q => 
+                q.id === quote.id ? { ...q, status: 'Förslag Skickat' } : q
+            ));
             showToast("Offert har skickats till kund!", "success");
         } catch (error) {
-            console.error("🚨 Kunde inte skicka offert:", error);
             showToast(`Kunde inte skicka offert: ${error.message}`, "error");
         } finally {
             setIsSyncing(false);
         }
-    }, [loadQuotes, showToast]);
+    }, [showToast]);
 
     const approveProposal = useCallback((quote) => {
         changeQuoteStatus(quote, 'godkänd');
