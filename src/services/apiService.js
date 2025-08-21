@@ -1,3 +1,4 @@
+// CACHE BUSTER v3.1 - Emergency Deploy
 // 🔬 ATOMSMED QUANTUM apiService.js v3.0 - PRODUCTION READY
 // NordSym Atom-Smed: Kirurgiskt precis för DISPATCH FIX + fullständig harmoni
 
