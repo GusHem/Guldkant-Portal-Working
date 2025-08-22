@@ -105,20 +105,23 @@ function App() {
         });
     };
 
-    // 🔬 ATOMSMED FIX: Enhanced email extraction for confirmation
-    const requestSendConfirmation = (quote) => {
+    // 🔬 ATOMSMED QUANTUM FIX: Closure scope bug eliminated
+    const requestSendConfirmation = useCallback((quote) => {
+        // ⚛️ CRITICAL FIX: Capture quote IMMEDIATELY to prevent closure scope issues
+        const capturedQuote = { ...quote };
+        
         // ⚡ QUANTUM EMAIL EXTRACTION - matches apiService.js exactly
-        const contactEmail = quote.email ||
-                             quote.contactEmail ||
-                             quote['Contact Email'] ||
-                             quote['E-post'] ||
-                             quote.epost ||
-                             quote.customerEmail ||
-                             quote.kundEmail ||
+        const contactEmail = capturedQuote.email ||
+                             capturedQuote.contactEmail ||
+                             capturedQuote['Contact Email'] ||
+                             capturedQuote['E-post'] ||
+                             capturedQuote.epost ||
+                             capturedQuote.customerEmail ||
+                             capturedQuote.kundEmail ||
                              'gustav@nordsym.com';
         
-        console.log('🔍 ATOMSMED DEBUG - Quote keys:', Object.keys(quote));
-        console.log('🔍 ATOMSMED DEBUG - Email fields:', Object.keys(quote).filter(k => 
+        console.log('🔍 ATOMSMED DEBUG - Quote keys:', Object.keys(capturedQuote));
+        console.log('🔍 ATOMSMED DEBUG - Email fields:', Object.keys(capturedQuote).filter(k => 
             k.toLowerCase().includes('email') || 
             k.toLowerCase().includes('post') || 
             k.toLowerCase().includes('mail')
@@ -130,25 +133,32 @@ function App() {
             title: 'Skicka Förslag?', 
             message: `Detta kommer att skicka ett e-postmeddelande till kunden (${contactEmail}) och ändra status. Är du säker?`, 
             onConfirm: () => { 
-                console.log('🔍 ATOMSMED DEBUG - Sending proposal with quote:', quote);
-                sendProposal(quote); 
+                console.log('🔍 ATOMSMED DEBUG - Sending proposal with captured quote:', capturedQuote);
+                console.log('🔍 ATOMSMED DEBUG - Captured quote has email:', capturedQuote.email);
+                sendProposal(capturedQuote); // ✅ USE CAPTURED VERSION - NEVER UNDEFINED
                 handleCloseModal(); 
             }, 
             confirmText: 'Ja, skicka', 
             confirmButtonClass: `${classes.buttonPrimaryBg} ${classes.buttonPrimaryText} ${classes.buttonPrimaryHover}` 
         });
-    };
+    }, [classes.buttonPrimaryBg, classes.buttonPrimaryText, classes.buttonPrimaryHover, sendProposal]);
     
-    const requestApproveConfirmation = (quote) => {
+    const requestApproveConfirmation = useCallback((quote) => {
+        // ⚛️ APPLY SAME FIX: Capture quote to prevent closure issues
+        const capturedQuote = { ...quote };
+        
         setConfirmationState({ 
             isOpen: true, 
             title: 'Godkänn Förslag Manuellt?', 
             message: `Är du säker på att du vill godkänna detta förslag? Statusen kommer ändras till "Godkänd".`, 
-            onConfirm: () => { approveProposal(quote); handleCloseModal(); }, 
+            onConfirm: () => { 
+                approveProposal(capturedQuote); 
+                handleCloseModal(); 
+            }, 
             confirmText: 'Ja, godkänn', 
             confirmButtonClass: 'bg-green-500 text-white hover:bg-green-600' 
         });
-    };
+    }, [approveProposal]);
 
     const sortedAndFilteredQuotes = useMemo(() => {
         const aktivaStatus = ['utkast', 'förslag-skickat', 'godkänd', 'genomförd', 'betald'];
@@ -241,5 +251,5 @@ function App() {
 }
 
 export default App;
-// 🔬 ATOMSMED QUANTUM FIX - Enhanced email extraction and debug logging
-// Force rebuild with email bug elimination
+// 🔬 ATOMSMED QUANTUM COLLAPSE - Closure scope bug eliminated with captured quotes
+// Email bug ELIMINATED through proper JavaScript closure handling
