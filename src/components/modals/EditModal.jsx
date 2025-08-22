@@ -935,97 +935,97 @@ useEffect(() => {
                                            className={`p-2 bg-red-500/20 text-red-400 rounded hover:bg-red-500/40 mt-1 ${focusClasses}`}
                                        >
                                            -
-                                       </button>
-                                   </div>
-                               ))}
-                               <button 
-                                   onClick={addCustomDiet} 
-                                   className={`${classes.buttonSecondaryBg} text-sm px-3 py-1 rounded ${focusClasses}`}
-                               >
-                                   + Lägg till specialkost
-                               </button>
-                           </div>
-                       </ModalSection>
+                                        </button>
+                                    </div>
+                                ))}
+                                <button 
+                                    onClick={addCustomDiet} 
+                                    className={`${classes.buttonSecondaryBg} text-sm px-3 py-1 rounded ${focusClasses}`}
+                                >
+                                    + Lägg till specialkost
+                                </button>
+                            </div>
+                        </ModalSection>
 
-                       <ModalSection 
-                           title="Interna Noteringar & Händelselogg" 
-                           isOpen={openSections.internal} 
-                           onToggle={() => setOpenSections(p => ({ ...p, internal: !p.internal }))}
-                       >
-                           <Textarea 
-                               name="internalComment" 
-                               value={formData?.internalComment || ''} 
-                               onChange={handleChange} 
-                           />
-                           <h3 className={`mt-4 font-semibold ${classes.textSecondary}`}>Händelselogg</h3>
-                           <EventLog events={formData?.events} />
-                       </ModalSection>
-                   </main>
+                        <ModalSection 
+                            title="Interna Noteringar & Händelselogg" 
+                            isOpen={openSections.internal} 
+                            onToggle={() => setOpenSections(p => ({ ...p, internal: !p.internal }))}
+                        >
+                            <Textarea 
+                                name="internalComment" 
+                                value={formData?.internalComment || ''} 
+                                onChange={handleChange} 
+                            />
+                            <h3 className={`mt-4 font-semibold ${classes.textSecondary}`}>Händelselogg</h3>
+                            <EventLog events={formData?.events} />
+                        </ModalSection>
+                    </main>
 
-                   <footer className={`p-4 border-t ${classes.border} flex flex-col sm:flex-row justify-between items-center gap-4 flex-shrink-0`}>
-                       <div className="flex items-center gap-4">
-                           <button 
-                               onClick={() => onDelete(formData)} 
-                               className={`p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors ${focusClasses}`}
-                           >
-                               <TrashIcon />
-                           </button>
-                           <button 
-                               onClick={() => onCopy(formData)} 
-                               className={`${classes.accent} hover:text-cyan-500 text-sm font-semibold ${focusClasses}`}
-                           >
-                               Kopiera Ärende
-                           </button>
-                       </div>
-                       
-                       <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                           <p className={`font-bold text-xl ${classes.accent}`}>
-                               {displayTotal.toLocaleString('sv-SE', { style: 'currency', currency: 'SEK' })}
-                           </p>
-                           <div className="flex gap-2 w-full sm:w-auto">
-                               <button 
-                                   onClick={handleExportPdf} 
-                                   disabled={pdfLoadingStatus !== 'ready' || pdfGenerating} 
-                                   className={`w-full sm:w-auto ${classes.buttonSecondaryBg} ${classes.buttonSecondaryText} ${classes.buttonSecondaryHover} px-3 py-2 text-sm rounded-lg font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${focusClasses}`}
-                               >
-                                   <FilePdfIcon /> 
-                                   {pdfGenerating ? 'Skapar PDF...' : 'Exportera'}
-                               </button>
-                               <button 
-                                   onClick={handleSave} 
-                                   className={`w-full sm:w-auto ${classes.buttonSecondaryBg} ${classes.buttonSecondaryText} ${classes.buttonSecondaryHover} px-5 py-2 rounded-lg font-semibold transition-colors shadow ${focusClasses}`}
-                               >
-                                   Spara
-                               </button>
-                           </div>
-                           {formData?.status === 'utkast' && (
-                               <button 
-                                   onClick={handleSendProposalWithLogging} 
-                                   className={`w-full sm:w-auto ${classes.buttonPrimaryBg} ${classes.buttonPrimaryText} ${classes.buttonPrimaryHover} px-5 py-2 rounded-lg font-semibold transition-colors shadow ${focusClasses}`}
-                               >
-                                   Skicka Förslag
-                               </button>
-                           )}
-                           {formData?.status === 'förslag-skickat' && (
-                               <button 
-                                   onClick={() => onApproveProposal(formData)} 
-                                   className={`w-full sm:w-auto bg-green-500 text-white hover:bg-green-600 px-5 py-2 rounded-lg font-semibold transition-colors shadow ${focusClasses}`}
-                               >
-                                   Godkänn Förslag
-                               </button>
-                           )}
-                       </div>
-                   </footer>
-               </div>
-           </div>
-           <CustomTimePicker 
-               isOpen={isTimePickerOpen} 
-               onClose={() => setTimePickerOpen(false)} 
-               value={formData?.[timePickerTarget] || '12:00'} 
-               onChange={handleTimeChange} 
-           />
-       </>
-   );
+                    <footer className={`p-4 border-t ${classes.border} flex flex-col sm:flex-row justify-between items-center gap-4 flex-shrink-0`}>
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={() => onDelete(formData)} 
+                                className={`p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors ${focusClasses}`}
+                            >
+                                <TrashIcon />
+                            </button>
+                            <button 
+                                onClick={() => onCopy(formData)} 
+                                className={`${classes.accent} hover:text-cyan-500 text-sm font-semibold ${focusClasses}`}
+                            >
+                                Kopiera Ärende
+                            </button>
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                            <p className={`font-bold text-xl ${classes.accent}`}>
+                                {displayTotal.toLocaleString('sv-SE', { style: 'currency', currency: 'SEK' })}
+                            </p>
+                            <div className="flex gap-2 w-full sm:w-auto">
+                                <button 
+                                    onClick={handleExportPdf} 
+                                    disabled={pdfLoadingStatus !== 'ready' || pdfGenerating} 
+                                    className={`w-full sm:w-auto ${classes.buttonSecondaryBg} ${classes.buttonSecondaryText} ${classes.buttonSecondaryHover} px-3 py-2 text-sm rounded-lg font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${focusClasses}`}
+                                >
+                                    <FilePdfIcon /> 
+                                    {pdfGenerating ? 'Skapar PDF...' : 'Exportera'}
+                                </button>
+                                <button 
+                                    onClick={handleSave} 
+                                    className={`w-full sm:w-auto ${classes.buttonSecondaryBg} ${classes.buttonSecondaryText} ${classes.buttonSecondaryHover} px-5 py-2 rounded-lg font-semibold transition-colors shadow ${focusClasses}`}
+                                >
+                                    Spara
+                                </button>
+                            </div>
+                            {formData?.status === 'utkast' && (
+                                <button 
+                                    onClick={handleSendProposalWithLogging} 
+                                    className={`w-full sm:w-auto ${classes.buttonPrimaryBg} ${classes.buttonPrimaryText} ${classes.buttonPrimaryHover} px-5 py-2 rounded-lg font-semibold transition-colors shadow ${focusClasses}`}
+                                >
+                                    Skicka Förslag
+                                </button>
+                            )}
+                            {formData?.status === 'förslag-skickat' && (
+                                <button 
+                                    onClick={() => onApproveProposal(formData)} 
+                                    className={`w-full sm:w-auto bg-green-500 text-white hover:bg-green-600 px-5 py-2 rounded-lg font-semibold transition-colors shadow ${focusClasses}`}
+                                >
+                                    Godkänn Förslag
+                                </button>
+                            )}
+                        </div>
+                    </footer>
+                </div>
+            </div>
+            <CustomTimePicker 
+                isOpen={isTimePickerOpen} 
+                onClose={() => setTimePickerOpen(false)} 
+                value={formData?.[timePickerTarget] || '12:00'} 
+                onChange={handleTimeChange} 
+            />
+        </>
+    );
 };
 
 export default EditModal;
