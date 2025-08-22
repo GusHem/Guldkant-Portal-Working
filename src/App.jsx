@@ -105,13 +105,35 @@ function App() {
         });
     };
 
+    // 🔬 ATOMSMED FIX: Enhanced email extraction for confirmation
     const requestSendConfirmation = (quote) => {
-        const contactEmail = quote.contactEmail || quote.email || 'okänd@email.com';
+        // ⚡ QUANTUM EMAIL EXTRACTION - matches apiService.js exactly
+        const contactEmail = quote.email ||
+                             quote.contactEmail ||
+                             quote['Contact Email'] ||
+                             quote['E-post'] ||
+                             quote.epost ||
+                             quote.customerEmail ||
+                             quote.kundEmail ||
+                             'gustav@nordsym.com';
+        
+        console.log('🔍 ATOMSMED DEBUG - Quote keys:', Object.keys(quote));
+        console.log('🔍 ATOMSMED DEBUG - Email fields:', Object.keys(quote).filter(k => 
+            k.toLowerCase().includes('email') || 
+            k.toLowerCase().includes('post') || 
+            k.toLowerCase().includes('mail')
+        ));
+        console.log('🔍 ATOMSMED DEBUG - Extracted email:', contactEmail);
+        
         setConfirmationState({ 
             isOpen: true, 
             title: 'Skicka Förslag?', 
             message: `Detta kommer att skicka ett e-postmeddelande till kunden (${contactEmail}) och ändra status. Är du säker?`, 
-            onConfirm: () => { sendProposal(quote); handleCloseModal(); }, 
+            onConfirm: () => { 
+                console.log('🔍 ATOMSMED DEBUG - Sending proposal with quote:', quote);
+                sendProposal(quote); 
+                handleCloseModal(); 
+            }, 
             confirmText: 'Ja, skicka', 
             confirmButtonClass: `${classes.buttonPrimaryBg} ${classes.buttonPrimaryText} ${classes.buttonPrimaryHover}` 
         });
@@ -218,5 +240,6 @@ function App() {
     );
 }
 
-export default App;// Force rebuild Wed Aug 20 14:50:42 CEST 2025
-/* Force rebuild Thu Aug 21 16:07:45 CEST 2025 */
+export default App;
+// 🔬 ATOMSMED QUANTUM FIX - Enhanced email extraction and debug logging
+// Force rebuild with email bug elimination
