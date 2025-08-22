@@ -35,7 +35,7 @@ function App() {
         toastTimer.current = setTimeout(() => setToast(null), 5000);
     }, []);
 
-    const { quotes, isLoading, isSyncing, fetchError, loadQuotes, saveQuote, addNewQuote, copyAndSaveQuote, changeQuoteStatus, sendProposal, approveProposal, deleteQuote } = useQuotesState(showToast);
+    const { quotes, isLoading, isSyncing, fetchError, loadQuotes, saveQuote, addNewQuote, copyAndSaveQuote, changeQuoteStatus, sendProposal, approveProposal, deleteQuote, hasMore, isFetchingMore, loadMoreQuotes } = useQuotesState(showToast);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -45,17 +45,14 @@ function App() {
 
     const handleLogin = () => setIsLoggedIn(true);
     
-    // ⭐ FIX #1: HÄMTA FULLSTÄNDIG DATA FÖR REDIGERING
-    // Denna funktion tar nu emot ett ID, hämtar all data för det ID:t, och öppnar sedan modalen.
-    const handleSelectQuote = async (quoteId) => {
-        try {
-            // OBS: Detta förutsätter att ni har en funktion i er apiService för att hämta ett enskilt ärende.
-            // Om inte, behöver den skapas. Logiken är ofta `fetch('/api/quotes/' + quoteId)`.
-            const fullQuoteData = await apiService.fetchQuoteById(quoteId); 
-            setSelectedQuote(fullQuoteData);
-        } catch (error) {
-            console.error(`Kunde inte hämta detaljer för ärende ${quoteId}:`, error);
-            showToast('Ett fel uppstod vid hämtning av ärendedetaljer.', 'error');
+    // 🎯 KRITISK FIX: Använder den existerande quotes-arrayen istället för ett API-anrop.
+    const handleSelectQuote = (quoteId) => {
+        const selected = quotes.find(q => q.id === quoteId);
+        if (selected) {
+            setSelectedQuote(selected);
+        } else {
+            console.error(`Kunde inte hitta ärende med ID ${quoteId} i den lokala listan.`);
+            showToast('Ärendet hittades inte i den lokala listan.', 'error');
         }
     };
 
@@ -205,13 +202,16 @@ function App() {
                                         displayQuotes={sortedAndFilteredQuotes}
                                         isLoading={isLoading} 
                                         fetchError={fetchError}
-                                        onSelectQuote={(quote) => handleSelectQuote(quote.id)} // Skicka bara med ID:t
+                                        onSelectQuote={handleSelectQuote}
                                         onNewQuote={handleAddNewQuote}
                                         onFilterChange={setFilter} 
                                         onSearch={setSearchTerm} 
                                         activeFilter={filter} 
                                         searchRef={searchRef} 
                                         onStatusChange={changeQuoteStatus} 
+                                        hasMore={hasMore}
+                                        isFetchingMore={isFetchingMore}
+                                        onLoadMore={loadMoreQuotes}
                                     /> 
                                 )}
                                 {activeView === 'ai' && <AiLog />}
