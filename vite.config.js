@@ -5,6 +5,6 @@ export default defineConfig({
   base: "/Guldkant-Portal-Working/",
   plugins: [react()],
   build: {
-    outDir: "dist"
+    outDir: "docs"
   }
 })
